@@ -1,5 +1,5 @@
 <?php
-include '../../conf/connection.php'; // koneksi ke database.
+include '../../conf/connection.php'; 
 session_start();
 if (!isset($_SESSION['nama_dokter'])) {
   header("Location: ../login/login_dokter.php");
