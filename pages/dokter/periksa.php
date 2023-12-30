@@ -127,7 +127,7 @@ $id_dokter = $_SESSION['id_dokter'];
                 </p>
               </a>
             </li>
-			<li class="nav-item">
+            <li class="nav-item">
               <a href="pages/widgets.html" class="nav-link">
                 <i class="fa fa-solid fa-user mr-2"></i>
                 <p>
@@ -200,8 +200,21 @@ $id_dokter = $_SESSION['id_dokter'];
             <div class="col-lg-4 col-7">
               <div class="small-box bg-success">
                 <div class="inner">
+                  <?php
+                  $poli = $conn->query("SELECT poli.nama_poli, poli.keterangan FROM poli JOIN dokter ON poli.id = dokter.id_poli")->fetch_array();
+                  ?>
+                  <h3><?php echo $poli['nama_poli']; ?></h3>
+                  <p><?php echo $poli['keterangan']; ?></p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-solid fa-capsules"></i>
+                </div>
+                <a href="#" class="small-box-footer">Poli anda.</a>
+              </div>
+              <div class="small-box bg-success">
+                <div class="inner">
                   <h3><?php echo '' . $conn->query("SELECT * FROM jadwal_periksa WHERE id_dokter='$id_dokter'")->num_rows; ?></h3>
-                  <p>Jadwal</p>
+                  <p>Jadwal periksa</p>
                 </div>
                 <div class="icon">
                   <i class="fa fa-solid fa-capsules"></i>
@@ -241,7 +254,7 @@ $id_dokter = $_SESSION['id_dokter'];
                     </thead>
                     <tbody>
                       <?php
-					  $no = 1;
+                      $no = 1;
                       $query = mysqli_query($conn, "SELECT * FROM jadwal_periksa WHERE id_dokter='$id_dokter'");
                       while ($jadwal = mysqli_fetch_array($query)) {
                       ?>
@@ -298,7 +311,7 @@ $id_dokter = $_SESSION['id_dokter'];
                           </td>
                         </tr>
                       <?php
-						$no++;
+                        $no++;
                       }
                       ?>
                     </tbody>

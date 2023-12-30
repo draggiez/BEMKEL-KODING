@@ -42,14 +42,16 @@ if (!isset($_SESSION['nama_admin'])) {
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <?php
-  if (isset($_POST['submit_obat'])) {
+  if (isset($_POST['submit_dokter'])) {
     include("../../conf/connection.php");
 
-    $s_nama_obat = $_POST['nama_obat1'];
-    $s_kemasan = $_POST['kemasan1'];
-    $s_harga = $_POST['harga1'];
-    $result = mysqli_query($conn, "INSERT INTO obat(nama_obat,kemasan,harga) VALUES('$s_nama_obat','$s_kemasan','$s_harga')");
-    header("Location: obat.php");
+    $s_nama_dokter = $_POST['nama_dokter1'];
+    $s_alamat = $_POST['alamat1'];
+    $s_no_hp = $_POST['no_hp1'];
+    $s_email = $_POST['email1'];
+    $s_poli = $_POST['poli1'];
+    $result = mysqli_query($conn, "INSERT INTO dokter(nama,alamat,no_hp,id_poli,email,password) VALUES('$s_nama_dokter','$s_alamat','$s_no_hp', '$s_poli', '$s_email', 'dokter123')");
+    header("Location: dokter.php");
   }
   ?>
 
@@ -172,25 +174,48 @@ if (!isset($_SESSION['nama_admin'])) {
             <div class="col-7">
               <div class="card card-danger">
                 <div class="card-header">
-                  <h3 class="card-title">Tambah Obat</h3>
+                  <h3 class="card-title">Tambah Dokter</h3>
                 </div>
                 <form method="POST">
                   <div class="card-body">
                     <div class="form-group">
-                      <label for="nama_obat1">Nama Obat</label>
-                      <input type="text" class="form-control" name="nama_obat1" placeholder="Masukkan nama obat">
+                      <label for="nama_dokter1">Nama dokter</label>
+                      <input type="text" class="form-control" name="nama_dokter1" placeholder="Masukkan nama dokter">
                     </div>
                     <div class="form-group">
-                      <label for="kemasan1">Kemasan</label>
-                      <input type="text" class="form-control" name="kemasan1" placeholder="Masukkan kemasan obat">
+                      <label for="alamat1">Alamat</label>
+                      <input type="text" class="form-control" name="alamat1" placeholder="Masukkan alamat dokter">
                     </div>
                     <div class="form-group">
-                      <label for="harga1">Harga</label>
-                      <input type="text" class="form-control" name="harga1" placeholder="Masukkan harga obat">
+                      <label for="no_hp1">Nomor HP</label>
+                      <input type="text" class="form-control" name="no_hp1" placeholder="Masukkan nomor HP dokter">
+                    </div>
+                    <div class="form-group">
+                      <label for="email1">Email</label>
+                      <input type="email" class="form-control" name="email1" placeholder="Masukkan email dokter">
+                    </div>
+                    <div class="form-group">
+                      <label for="password1">Password</label>
+                      <input disabled type="text" class="form-control" name="password1" placeholder="dokter123">
+                    </div>
+                    <div class="form-group">
+                      <label for="pol1">Poli</label>
+                      <select class="custom-select form-control-border" name="poli1">
+                        <?php
+                        $r_poli = $conn->query("SELECT * FROM poli");
+                        while ($d_poli = mysqli_fetch_array($r_poli, MYSQLI_ASSOC)) :;
+                        ?>
+                          <option value="<?php echo $d_poli["id"]; ?>">
+                            <?php echo $d_poli["nama_poli"]; ?>
+                          </option>
+                        <?php
+                        endwhile;
+                        ?>
+                      </select>
                     </div>
                   </div>
                   <div style="margin-top:-20px; margin-bottom:10px;" class="card-footer">
-                    <button type="submit" name="submit_obat" class="btn btn-success">Tambah</button>
+                    <button type="submit" name="submit_dokter" class="btn btn-success">Tambah</button>
                   </div>
                 </form>
               </div>
@@ -199,13 +224,13 @@ if (!isset($_SESSION['nama_admin'])) {
             <div class="col-lg-4 col-7">
               <div class="small-box bg-danger">
                 <div class="inner">
-                  <h3><?php echo '' . $conn->query("SELECT * FROM obat")->num_rows; ?></h3>
-                  <p>Obat</p>
+                  <h3><?php echo '' . $conn->query("SELECT * FROM dokter")->num_rows; ?></h3>
+                  <p>Dokter</p>
                 </div>
                 <div class="icon">
-                  <i class="fa fa-solid fa-capsules"></i>
+                  <i class="fa fa-solid fa-stethoscope"></i>
                 </div>
-                <a href="#" class="small-box-footer">Kelola obat dengan seksama!</a>
+                <a href="#" class="small-box-footer">Kelola dokter dengan seksama!</a>
               </div>
             </div> <!-- /info obat-->
           </div>
@@ -214,7 +239,7 @@ if (!isset($_SESSION['nama_admin'])) {
             <div class="col-11">
               <div class="card card-danger">
                 <div class="card-header">
-                  <h3 class="card-title">Daftar Obat</h3>
+                  <h3 class="card-title">Daftar Dokter</h3>
                   <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
                       <!--<input type="text" name="table_search" class="form-control float-right" placeholder="Search">
@@ -232,62 +257,82 @@ if (!isset($_SESSION['nama_admin'])) {
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th style="width:40%">Nama Obat</th>
-                        <th style="width:25%">Kemasan</th>
-                        <th style="width:10%">Harga</th>
-                        <th style="width:30%">Aksi</th>
+                        <th style="width:20%">Nama</th>
+                        <th style="width:20%">Alamat</th>
+                        <th style="width:10%">Nomor HP</th>
+                        <th style="width:10%">Email</th>
+                        <th style="width:10%">Poli</th>
+                        <th style="width:40%">Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $query = mysqli_query($conn, "SELECT * FROM obat");
-                      while ($obat = mysqli_fetch_array($query)) {
+                      $query = mysqli_query($conn, "SELECT d.id, d.nama, d.alamat, d.no_hp, d.email, d.id_poli, p.nama_poli FROM dokter AS d JOIN poli AS p ON d.id_poli = p.id");
+                      while ($dokter = mysqli_fetch_array($query)) {
                       ?>
                         <tr>
-                          <td><?php echo $obat["id"]; ?></td>
-                          <td><?php echo $obat["nama_obat"]; ?></td>
-                          <td><?php echo $obat["kemasan"]; ?></td>
-                          <td><?php echo $obat["harga"]; ?></td>
+                          <td><?php echo $dokter["id"]; ?></td>
+                          <td><?php echo $dokter["nama"]; ?></td>
+                          <td><?php echo $dokter["alamat"]; ?></td>
+                          <td><?php echo $dokter["no_hp"]; ?></td>
+                          <td><?php echo $dokter["email"]; ?></td>
+                          <td><?php echo $dokter["nama_poli"]; ?></td>
                           <td>
                             <div class="row">
-                              <a style="width:45%; margin:4px;" href='' data-toggle="modal" data-target="#modal<?php echo $obat['id']; ?>"><button class="btn btn-success btn-block">Edit</button></a>
-                              <a style="width:45%; margin:4px;" href='priv/obat_delete.php?id=<?php echo $obat["id"]; ?>'><button class="btn btn-danger btn-block">Hapus</button></a>
+                              <a style="width:45%; margin:4px;" href='' data-toggle="modal" data-target="#modal<?php echo $dokter["id"]; ?>"><button class="btn btn-success btn-block">Edit</button></a>
+                              <a style="width:45%; margin:4px;" href='priv/dokter_delete.php?id=<?php echo $dokter["id"]; ?>'><button class="btn btn-danger btn-block">Hapus</button></a>
                             </div>
                             <!-- edit modal -->
-                            <div class="modal fade" id="modal<?php echo $obat['id']; ?>">
+                            <div class="modal fade" id="modal<?php echo $dokter["id"]; ?>">
                               <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h4 class="modal-title">Edit data obat</h4>
+                                    <h4 class="modal-title">Edit data dokter</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
                                   <div class="modal-body">
-                                    <form action="priv/obat_edit.php" method="POST">
-                                      <div class="card-body">
+                                    <form action="priv/dokter_edit.php" method="POST">
+                                      <div style="margin-top:-20px;"class="card-body">
                                         <div class="form-group">
-                                          <label for="id2">ID</label>
-                                          <input type="text" disabled value="<?php echo $obat['id'] ?>" class="form-control" placeholder="Masukkan nama obat">
-                                          <input type="text" hidden value="<?php echo $obat['id'] ?>" class="form-control" name="id2" placeholder="Masukkan nama obat">
+                                          <input type="text" hidden value="<?php echo $dokter['id']; ?>" class="form-control" name="id2" placeholder="Masukkan nama obat">
                                         </div>
                                         <div class="form-group">
-                                          <label for="nama_obat2">Nama Obat</label>
-                                          <input type="text" value="<?php echo $obat['nama_obat'] ?>" class="form-control" name="nama_obat2" placeholder="Masukkan nama obat">
+                                          <label for="nama_dokter2">Nama dokter</label>
+                                          <input type="text" value="<?php echo $dokter['nama']; ?>" class="form-control" name="nama_dokter2" placeholder="Masukkan nama dokter">
                                         </div>
                                         <div class="form-group">
-                                          <label for="kemasan2">Kemasan</label>
-                                          <input type="text" value="<?php echo $obat['kemasan'] ?>" class="form-control" name="kemasan2" placeholder="Masukkan kemasan obat">
+                                          <label for="alamat2">Alamat</label>
+                                          <input type="text" value="<?php echo $dokter['alamat']; ?>" class="form-control" name="alamat2" placeholder="Masukkan alamat dokter">
                                         </div>
                                         <div class="form-group">
-                                          <label for="harga2">Harga</label>
-                                          <input type="text" value="<?php echo $obat['harga'] ?>" class="form-control" name="harga2" placeholder="Masukkan harga obat">
+                                          <label for="no_hp2">Nomor HP</label>
+                                          <input type="text" value="<?php echo $dokter['no_hp']; ?>" class="form-control" name="no_hp2" placeholder="Masukkan nomor HP dokter">
                                         </div>
-                                      </div>
-                                      <div class="modal-footer justify-content-between">
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                                        <button type="submit" name="edit_obat" class="btn btn-primary">Simpan</button>
-                                      </div>
+                                        <div class="form-group">
+                                          <label for="email2">Email</label>
+                                          <input type="email" value="<?php echo $dokter['email']; ?>" class="form-control" name="email2" placeholder="Masukkan email dokter">
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="poli2">Poli</label>
+                                          <select class="custom-select form-control-border" name="poli2" value="<?php echo $dokter['id_poli']; ?>">
+                                            <?php
+                                            $r_poli = $conn->query("SELECT * FROM poli");
+                                            while ($d_poli = mysqli_fetch_array($r_poli, MYSQLI_ASSOC)) :;
+                                            ?>
+                                              <option value="<?php echo $d_poli["id"]; ?>">
+                                                <?php echo $d_poli["nama_poli"]; ?>
+                                              </option>
+                                            <?php
+                                            endwhile;
+                                            ?>
+                                          </select>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                          <button type="submit" name="edit_dokter" class="btn btn-primary">Simpan</button>
+                                        </div>
                                     </form>
                                   </div>
                                 </div>
