@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 27, 2023 at 01:54 PM
+-- Generation Time: Dec 31, 2023 at 03:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -39,7 +39,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id`, `email`, `password`, `nama_admin`) VALUES
-(1, 'adm1@gmail.com', 'adm1', 'Sasuke');
+(1, 'adm1@gmail.com', 'adm1', 'Atmin Satu');
 
 -- --------------------------------------------------------
 
@@ -60,7 +60,9 @@ CREATE TABLE `daftar_poli` (
 --
 
 INSERT INTO `daftar_poli` (`id`, `id_pasien`, `id_jadwal`, `keluhan`, `no_antrian`) VALUES
-(1, 1, 1, 'Pusing, mata berkunang-kunang', 1);
+(1, 1, 1, 'Pusing, mata berkunang-kunang', 1),
+(11, 3, 1, 'Tambal Gigi', 2),
+(12, 3, 3, 'Bersihin dosa', 1);
 
 -- --------------------------------------------------------
 
@@ -95,7 +97,8 @@ CREATE TABLE `dokter` (
 --
 
 INSERT INTO `dokter` (`id`, `nama`, `alamat`, `no_hp`, `id_poli`, `email`, `password`) VALUES
-(1, 'Naruto', 'Jl. Konoha 56', '089777654342', 1, 'dok1@gmail.com', 'dok1');
+(1, 'Naruto', 'Jl. Konoha 56', '089777654342', 1, 'dok1@gmail.com', 'dok1'),
+(2, 'Minato', 'Jl. Merdeka', '087667890754', 1, 'dok2@gmail.com', 'dokter123');
 
 -- --------------------------------------------------------
 
@@ -116,7 +119,8 @@ CREATE TABLE `jadwal_periksa` (
 --
 
 INSERT INTO `jadwal_periksa` (`id`, `id_dokter`, `hari`, `jam_mulai`, `jam_selesai`) VALUES
-(1, 1, 'Senin', '07:00:00', '09:00:00');
+(1, 1, 'Senin', '07:00:00', '09:00:00'),
+(3, 2, 'Senin', '09:00:00', '11:00:00');
 
 -- --------------------------------------------------------
 
@@ -295,15 +299,18 @@ CREATE TABLE `pasien` (
   `alamat` varchar(255) DEFAULT NULL,
   `no_ktp` varchar(255) DEFAULT NULL,
   `no_hp` varchar(50) DEFAULT NULL,
-  `no_rm` varchar(25) DEFAULT NULL
+  `no_rm` varchar(25) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pasien`
 --
 
-INSERT INTO `pasien` (`id`, `nama`, `alamat`, `no_ktp`, `no_hp`, `no_rm`) VALUES
-(1, 'Sakura', 'Jl. Landoh', '3317102837871147', '087466534213', '202312-1');
+INSERT INTO `pasien` (`id`, `nama`, `alamat`, `no_ktp`, `no_hp`, `no_rm`, `email`, `password`) VALUES
+(1, 'Sakura', 'Jl. Landoh', '3317102837871147', '087466534213', '202312-001', '', ''),
+(3, 'Agus Kurniawan', 'Jl. Kaliuntu', '3317123465669997', '087889765432', '202312-002', 'pas1@gmail.com', 'pas1');
 
 -- --------------------------------------------------------
 
@@ -336,7 +343,8 @@ CREATE TABLE `poli` (
 --
 
 INSERT INTO `poli` (`id`, `nama_poli`, `keterangan`) VALUES
-(1, 'Poli Gigi', 'Menangani keluhan pada gigi');
+(1, 'Poli Gigi', 'Menangani keluhan pada gigi'),
+(2, 'Poli Mata', 'Menangani keluhan pada mata');
 
 --
 -- Indexes for dumped tables
@@ -410,7 +418,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `detail_periksa`
@@ -422,13 +430,13 @@ ALTER TABLE `detail_periksa`
 -- AUTO_INCREMENT for table `dokter`
 --
 ALTER TABLE `dokter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `jadwal_periksa`
 --
 ALTER TABLE `jadwal_periksa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `obat`
@@ -440,7 +448,7 @@ ALTER TABLE `obat`
 -- AUTO_INCREMENT for table `pasien`
 --
 ALTER TABLE `pasien`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `periksa`
@@ -452,7 +460,7 @@ ALTER TABLE `periksa`
 -- AUTO_INCREMENT for table `poli`
 --
 ALTER TABLE `poli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

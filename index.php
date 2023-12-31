@@ -52,15 +52,17 @@ if (isset($_SESSION['nama_dokter'])) {
             </a>
           </div>
           <div class="col-4">
-            <button type="button" class="btn btn-primary btn-block">
-              <i class="fa fa-solid fa-hospital-user"></i> Pasien
-            </button>
+            <a href="pages/login/login_pasien.php">
+              <button type="button" class="btn btn-primary btn-block">
+                <i class="fa fa-solid fa-hospital-user"></i> Pasien
+              </button>
+            </a>
           </div>
         </div>
       </div>
       <div class="social-auth-links text-center mt-0">
         <p class="mb-1">
-          Belum punya akun pasien?<a href="register.php" class="text-center"> Daftar Disini.</a>
+          Belum punya akun pasien?<a href="pages/register/register_pasien.php" class="text-center"> Daftar Disini.</a>
         </p>
       </div>
     </div>

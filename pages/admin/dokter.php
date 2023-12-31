@@ -172,7 +172,7 @@ if (!isset($_SESSION['nama_admin'])) {
           <div class="row">
             <!-- Tambah obat form -->
             <div class="col-7">
-              <div class="card card-danger">
+              <div class="card card-primary">
                 <div class="card-header">
                   <h3 class="card-title">Tambah Dokter</h3>
                 </div>
@@ -222,7 +222,7 @@ if (!isset($_SESSION['nama_admin'])) {
             </div> <!-- /tambah Obat form -->
             <!-- info obat -->
             <div class="col-lg-4 col-7">
-              <div class="small-box bg-danger">
+              <div class="small-box bg-primary">
                 <div class="inner">
                   <h3><?php echo '' . $conn->query("SELECT * FROM dokter")->num_rows; ?></h3>
                   <p>Dokter</p>
@@ -237,7 +237,7 @@ if (!isset($_SESSION['nama_admin'])) {
           <div class="row">
             <!-- daftar obat -->
             <div class="col-11">
-              <div class="card card-danger">
+              <div class="card card-primary">
                 <div class="card-header">
                   <h3 class="card-title">Daftar Dokter</h3>
                   <div class="card-tools">
