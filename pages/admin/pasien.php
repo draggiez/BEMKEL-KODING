@@ -42,16 +42,38 @@ if (!isset($_SESSION['nama_admin'])) {
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <?php
-  if (isset($_POST['submit_dokter'])) {
+  if (isset($_POST['submit_pasien'])) {
     include("../../conf/connection.php");
 
-    $s_nama_dokter = $_POST['nama_dokter1'];
+    $s_nama_pasien = $_POST['nama_pasien1'];
     $s_alamat = $_POST['alamat1'];
+    $s_no_ktp = $_POST['no_ktp1'];
     $s_no_hp = $_POST['no_hp1'];
     $s_email = $_POST['email1'];
-    $s_poli = $_POST['poli1'];
-    $result = mysqli_query($conn, "INSERT INTO dokter(nama,alamat,no_hp,id_poli,email,password) VALUES('$s_nama_dokter','$s_alamat','$s_no_hp', '$s_poli', '$s_email', 'dokter123')");
-    header("Location: dokter.php");
+
+    $cek_email = $conn->query("SELECT * FROM pasien WHERE email='$s_email'");
+    $cek_ktp = $conn->query("SELECT * FROM pasien WHERE no_ktp='$s_no_ktp'");
+    $cek_no_rm = $conn->query("SELECT MAX(SUBSTRING(no_rm, 8)) AS last_queue_number FROM pasien")->fetch_assoc();
+    $no_terakhir = $cek_no_rm['last_queue_number'];
+    $no_terakhir = $no_terakhir ? $no_terakhir : 0;
+
+    $tahun_bulan = date("Ym");
+    $nomor_antri = $no_terakhir + 1;
+    $no_rm = $tahun_bulan . '-' . str_pad($nomor_antri, 3, "0", STR_PAD_LEFT);
+
+    if ($cek_email->num_rows == 1) {
+      echo '<b>Warning!</b> Email sudah terdaftar.';
+    } elseif ($cek_ktp->num_rows == 1) {
+      echo '<b>Warning!</b> KTP sudah terdaftar.';
+    } else {
+      if (empty($s_email)) {
+        echo '<b>Warning!</b> Silahkan isi semua data yang diperlukan.';
+      } else {
+        $result = mysqli_query($conn, "INSERT INTO pasien(nama,alamat,no_ktp,no_hp,no_rm,email,password) VALUES('$s_nama_pasien','$s_alamat','$s_no_ktp','$s_no_hp', '$no_rm', '$s_email', 'pasien123')");
+        header('Location: pasien.php'); // Alihkan ke halaman login.
+        exit();
+      }
+    }
   }
   ?>
 
@@ -181,19 +203,23 @@ if (!isset($_SESSION['nama_admin'])) {
           <div class="row">
             <!-- Tambah obat form -->
             <div class="col-7">
-              <div class="card card-primary">
+              <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Tambah Dokter</h3>
+                  <h3 class="card-title">Tambah Pasien</h3>
                 </div>
                 <form method="POST">
                   <div class="card-body">
                     <div class="form-group">
-                      <label for="nama_dokter1">Nama dokter</label>
-                      <input type="text" class="form-control" name="nama_dokter1" placeholder="Masukkan nama dokter">
+                      <label for="nama_pasien1">Nama Pasien</label>
+                      <input type="text" class="form-control" name="nama_pasien1" placeholder="Masukkan nama dokter">
                     </div>
                     <div class="form-group">
                       <label for="alamat1">Alamat</label>
                       <input type="text" class="form-control" name="alamat1" placeholder="Masukkan alamat dokter">
+                    </div>
+                    <div class="form-group">
+                      <label for="no_ktp1">Nomor KTP</label>
+                      <input type="text" class="form-control" name="no_ktp1" placeholder="Masukkan nomor HP dokter">
                     </div>
                     <div class="form-group">
                       <label for="no_hp1">Nomor HP</label>
@@ -205,50 +231,35 @@ if (!isset($_SESSION['nama_admin'])) {
                     </div>
                     <div class="form-group">
                       <label for="password1">Password</label>
-                      <input disabled type="text" class="form-control" name="password1" placeholder="dokter123">
-                    </div>
-                    <div class="form-group">
-                      <label for="pol1">Poli</label>
-                      <select class="custom-select form-control-border" name="poli1">
-                        <?php
-                        $r_poli = $conn->query("SELECT * FROM poli");
-                        while ($d_poli = mysqli_fetch_array($r_poli, MYSQLI_ASSOC)) :;
-                        ?>
-                          <option value="<?php echo $d_poli["id"]; ?>">
-                            <?php echo $d_poli["nama_poli"]; ?>
-                          </option>
-                        <?php
-                        endwhile;
-                        ?>
-                      </select>
+                      <input disabled type="text" class="form-control" name="password1" placeholder="pasien123">
                     </div>
                   </div>
                   <div style="margin-top:-20px; margin-bottom:10px;" class="card-footer">
-                    <button type="submit" name="submit_dokter" class="btn btn-success">Tambah</button>
+                    <button type="submit" name="submit_pasien" class="btn btn-success">Tambah</button>
                   </div>
                 </form>
               </div>
             </div> <!-- /tambah Obat form -->
             <!-- info obat -->
             <div class="col-lg-4 col-7">
-              <div class="small-box bg-primary">
+              <div class="small-box bg-success">
                 <div class="inner">
-                  <h3><?php echo '' . $conn->query("SELECT * FROM dokter")->num_rows; ?></h3>
-                  <p>Dokter</p>
+                  <h3><?php echo '' . $conn->query("SELECT * FROM pasien")->num_rows; ?></h3>
+                  <p>Pasien</p>
                 </div>
                 <div class="icon">
-                  <i class="fa fa-solid fa-stethoscope"></i>
+                  <i class="fa fa-solid fa-user-minus"></i>
                 </div>
-                <a href="#" class="small-box-footer">Kelola dokter dengan seksama!</a>
+                <a href="#" class="small-box-footer">Kelola pasien dengan seksama!</a>
               </div>
             </div> <!-- /info obat-->
           </div>
           <div class="row">
             <!-- daftar obat -->
             <div class="col-11">
-              <div class="card card-primary">
+              <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Daftar Dokter</h3>
+                  <h3 class="card-title">Daftar Pasien</h3>
                   <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
                       <!--<input type="text" name="table_search" class="form-control float-right" placeholder="Search">
@@ -268,79 +279,70 @@ if (!isset($_SESSION['nama_admin'])) {
                         <th>ID</th>
                         <th style="width:20%">Nama</th>
                         <th style="width:20%">Alamat</th>
+                        <th style="width:10%">Nomor KTP</th>
                         <th style="width:10%">Nomor HP</th>
+                        <th style="width:10%">Nomor RM</th>
                         <th style="width:10%">Email</th>
-                        <th style="width:10%">Poli</th>
                         <th style="width:40%">Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $query = mysqli_query($conn, "SELECT d.id, d.nama, d.alamat, d.no_hp, d.email, d.id_poli, p.nama_poli FROM dokter AS d JOIN poli AS p ON d.id_poli = p.id");
-                      while ($dokter = mysqli_fetch_array($query)) {
+                      $query = mysqli_query($conn, "SELECT * FROM pasien");
+                      while ($pasien = mysqli_fetch_array($query)) {
                       ?>
                         <tr>
-                          <td><?php echo $dokter["id"]; ?></td>
-                          <td><?php echo $dokter["nama"]; ?></td>
-                          <td><?php echo $dokter["alamat"]; ?></td>
-                          <td><?php echo $dokter["no_hp"]; ?></td>
-                          <td><?php echo $dokter["email"]; ?></td>
-                          <td><?php echo $dokter["nama_poli"]; ?></td>
+                          <td><?php echo $pasien["id"]; ?></td>
+                          <td><?php echo $pasien["nama"]; ?></td>
+                          <td><?php echo $pasien["alamat"]; ?></td>
+                          <td><?php echo $pasien["no_ktp"]; ?></td>
+                          <td><?php echo $pasien["no_hp"]; ?></td>
+                          <td><?php echo $pasien["no_rm"]; ?></td>
+                          <td><?php echo $pasien["email"]; ?></td>
                           <td>
                             <div class="row">
-                              <a style="width:45%; margin:4px;" href='' data-toggle="modal" data-target="#modal<?php echo $dokter["id"]; ?>"><button class="btn btn-success btn-block">Edit</button></a>
-                              <a style="width:45%; margin:4px;" href='priv/dokter_delete.php?id=<?php echo $dokter["id"]; ?>'><button class="btn btn-danger btn-block">Hapus</button></a>
+                              <a style="margin:2px;" href='' data-toggle="modal" data-target="#modal<?php echo $pasien["id"]; ?>"><button class="btn btn-success btn-block">Edit</button></a>
+                              <a style="margin:2px;" href='priv/pasien_delete.php?id=<?php echo $pasien["id"]; ?>'><button class="btn btn-danger btn-block">Hapus</button></a>
                             </div>
                             <!-- edit modal -->
-                            <div class="modal fade" id="modal<?php echo $dokter["id"]; ?>">
+                            <div class="modal fade" id="modal<?php echo $pasien["id"]; ?>">
                               <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h4 class="modal-title">Edit data dokter</h4>
+                                    <h4 class="modal-title">Edit data pasien</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
                                   <div class="modal-body">
-                                    <form action="priv/dokter_edit.php" method="POST">
+                                    <form action="priv/pasien_edit.php" method="POST">
                                       <div style="margin-top:-20px;" class="card-body">
                                         <div class="form-group">
-                                          <input type="text" hidden value="<?php echo $dokter['id']; ?>" class="form-control" name="id2" placeholder="Masukkan nama obat">
+                                          <input type="text" hidden value="<?php echo $pasien['id']; ?>" class="form-control" name="id2" placeholder="Masukkan id pasien">
                                         </div>
                                         <div class="form-group">
-                                          <label for="nama_dokter2">Nama dokter</label>
-                                          <input type="text" value="<?php echo $dokter['nama']; ?>" class="form-control" name="nama_dokter2" placeholder="Masukkan nama dokter">
+                                          <label for="nama_pasien2">Nama Pasien</label>
+                                          <input type="text" value="<?php echo $pasien['nama']; ?>" class="form-control" name="nama_pasien2" placeholder="Masukkan nama pasien">
                                         </div>
                                         <div class="form-group">
                                           <label for="alamat2">Alamat</label>
-                                          <input type="text" value="<?php echo $dokter['alamat']; ?>" class="form-control" name="alamat2" placeholder="Masukkan alamat dokter">
+                                          <input type="text" value="<?php echo $pasien['alamat']; ?>" class="form-control" name="alamat2" placeholder="Masukkan alamat pasien">
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="no_ktp2">Nomor KTP</label>
+                                          <input type="text" value="<?php echo $pasien['no_ktp']; ?>" class="form-control" name="no_hp2" placeholder="Masukkan nomor KTP pasien">
                                         </div>
                                         <div class="form-group">
                                           <label for="no_hp2">Nomor HP</label>
-                                          <input type="text" value="<?php echo $dokter['no_hp']; ?>" class="form-control" name="no_hp2" placeholder="Masukkan nomor HP dokter">
+                                          <input type="text" value="<?php echo $pasien['no_hp']; ?>" class="form-control" name="no_hp2" placeholder="Masukkan nomor HP pasien">
                                         </div>
                                         <div class="form-group">
                                           <label for="email2">Email</label>
-                                          <input type="email" value="<?php echo $dokter['email']; ?>" class="form-control" name="email2" placeholder="Masukkan email dokter">
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="poli2">Poli</label>
-                                          <select class="custom-select form-control-border" name="poli2" value="<?php echo $dokter['id_poli']; ?>">
-                                            <?php
-                                            $r_poli = $conn->query("SELECT * FROM poli");
-                                            while ($d_poli = mysqli_fetch_array($r_poli, MYSQLI_ASSOC)) :;
-                                            ?>
-                                              <option value="<?php echo $d_poli["id"]; ?>">
-                                                <?php echo $d_poli["nama_poli"]; ?>
-                                              </option>
-                                            <?php
-                                            endwhile;
-                                            ?>
-                                          </select>
+                                          <input type="email" value="<?php echo $pasien['email']; ?>" class="form-control" name="email2" placeholder="Masukkan email pasien">
                                         </div>
                                         <div class="modal-footer justify-content-between">
                                           <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                                          <button type="submit" name="edit_dokter" class="btn btn-primary">Simpan</button>
+                                          <button type="submit" name="edit_pasien" class="btn btn-primary">Simpan</button>
                                         </div>
                                     </form>
                                   </div>

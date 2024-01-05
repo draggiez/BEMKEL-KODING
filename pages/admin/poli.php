@@ -117,6 +117,15 @@ if (!isset($_SESSION['nama_admin'])) {
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
+              <a href="../dashboard/db_admin.php" class="nav-link">
+                <i class="fa fa-solid fa-dashboard mr-2"></i>
+                <p>
+                  Dashboard
+                  <span class="right badge badge-danger">Admin</span>
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="dokter.php" class="nav-link">
                 <i class="fa fa-solid fa-stethoscope mr-2"></i>
                 <p>
@@ -126,7 +135,7 @@ if (!isset($_SESSION['nama_admin'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+              <a href="pasien.php" class="nav-link">
                 <i class="fa fa-solid fa-user mr-2"></i>
                 <p>
                   Pasien
@@ -258,7 +267,7 @@ if (!isset($_SESSION['nama_admin'])) {
                                   </div>
                                   <div class="modal-body">
                                     <form action="priv/poli_edit.php" method="POST">
-                                      <div style="margin-top:-20px;"class="card-body">
+                                      <div style="margin-top:-20px;" class="card-body">
                                         <div class="form-group">
                                           <input type="text" hidden value="<?php echo $poli['id']; ?>" class="form-control" name="id2" placeholder="Masukkan nama obat">
                                         </div>

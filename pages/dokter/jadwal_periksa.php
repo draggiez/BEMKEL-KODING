@@ -1,10 +1,11 @@
 <?php
 include '../../conf/connection.php'; // koneksi ke database.
 session_start();
-if (!isset($_SESSION['nama_admin'])) {
-  header("Location: ../login/login_admin.php");
+if (!isset($_SESSION['nama_dokter'])) {
+  header("Location: ../login/login_dokter.php");
   exit();
 }
+$id_dokter = $_SESSION['id_dokter'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +15,7 @@ if (!isset($_SESSION['nama_admin'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
     <?php
-    echo (isset($_SESSION['nama_admin']) || isset($_COOKIE['_logged']) ? 'Beranda | ' . $_SESSION['nama_admin'] : 'Beranda');
+    echo (isset($_SESSION['nama_dokter']) || isset($_COOKIE['_logged']) ? 'Beranda | ' . $_SESSION['nama_dokter'] : 'Beranda');
     ?>
   </title>
 
@@ -42,16 +43,14 @@ if (!isset($_SESSION['nama_admin'])) {
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <?php
-  if (isset($_POST['submit_dokter'])) {
+  if (isset($_POST['submit_jadwal_periksa'])) {
     include("../../conf/connection.php");
 
-    $s_nama_dokter = $_POST['nama_dokter1'];
-    $s_alamat = $_POST['alamat1'];
-    $s_no_hp = $_POST['no_hp1'];
-    $s_email = $_POST['email1'];
-    $s_poli = $_POST['poli1'];
-    $result = mysqli_query($conn, "INSERT INTO dokter(nama,alamat,no_hp,id_poli,email,password) VALUES('$s_nama_dokter','$s_alamat','$s_no_hp', '$s_poli', '$s_email', 'dokter123')");
-    header("Location: dokter.php");
+    $s_hari = $_POST['hari1'];
+    $s_jam_mulai = $_POST['jam_mulai1'];
+    $s_jam_selesai = $_POST['jam_selesai1'];
+    $result = mysqli_query($conn, "INSERT INTO jadwal_periksa(id_dokter,hari,jam_mulai,jam_selesai) VALUES('$id_dokter','$s_hari','$s_jam_mulai','$s_jam_selesai')");
+    header("Location: jadwal_periksa.php");
   }
   ?>
 
@@ -85,7 +84,7 @@ if (!isset($_SESSION['nama_admin'])) {
             <i class="fas fa-th-large"></i>
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <a href="../dashboard/db_admin.php" class="dropdown-item">
+            <a href="../dashboard/db_dokter.php" class="dropdown-item">
               <i class="fa fa-solid fa-house mr-2"></i> Home
             </a>
             <div class="dropdown-divider"></div>
@@ -112,7 +111,7 @@ if (!isset($_SESSION['nama_admin'])) {
             <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="#" class="d-block"><?php echo '' . $_SESSION['nama_admin']; ?></a>
+            <a href="#" class="d-block"><?php echo '' . $_SESSION['nama_dokter']; ?></a>
           </div>
         </div>
 
@@ -120,20 +119,20 @@ if (!isset($_SESSION['nama_admin'])) {
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
-              <a href="../dashboard/db_admin.php" class="nav-link">
+              <a href="../dashboard/db_dokter.php" class="nav-link">
                 <i class="fa fa-solid fa-dashboard mr-2"></i>
                 <p>
                   Dashboard
-                  <span class="right badge badge-danger">Admin</span>
+                  <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="dokter.php" class="nav-link">
+              <a href="jadwal_periksa.php" class="nav-link">
                 <i class="fa fa-solid fa-stethoscope mr-2"></i>
                 <p>
-                  Dokter
-                  <span class="right badge badge-danger">Admin</span>
+                  Jadwal Periksa
+                  <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
             </li>
@@ -141,26 +140,26 @@ if (!isset($_SESSION['nama_admin'])) {
               <a href="pasien.php" class="nav-link">
                 <i class="fa fa-solid fa-user mr-2"></i>
                 <p>
-                  Pasien
-                  <span class="right badge badge-danger">Admin</span>
+                  Memeriksa Pasien
+                  <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="poli.php" class="nav-link">
+              <a href="riwayat_pasien.php" class="nav-link">
+                <i class="fa fa-solid fa-file-waveform mr-2"></i>
+                <p>
+                  Riwayat Pasien
+                  <span class="right badge badge-success">Dokter</span>
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="profil.php" class="nav-link">
                 <i class="fa fa-solid fa-house-chimney-medical mr-2"></i>
                 <p>
-                  Poli
-                  <span class="right badge badge-danger">Admin</span>
-                </p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="obat.php" class="nav-link">
-                <i class="fa fa-solid fa-capsules mr-2"></i>
-                <p>
-                  Obat
-                  <span class="right badge badge-danger">Admin</span>
+                  Profil
+                  <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
             </li>
@@ -181,74 +180,70 @@ if (!isset($_SESSION['nama_admin'])) {
           <div class="row">
             <!-- Tambah obat form -->
             <div class="col-7">
-              <div class="card card-primary">
+              <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Tambah Dokter</h3>
+                  <h3 class="card-title">Tambah Jadwal</h3>
                 </div>
                 <form method="POST">
                   <div class="card-body">
                     <div class="form-group">
-                      <label for="nama_dokter1">Nama dokter</label>
-                      <input type="text" class="form-control" name="nama_dokter1" placeholder="Masukkan nama dokter">
-                    </div>
-                    <div class="form-group">
-                      <label for="alamat1">Alamat</label>
-                      <input type="text" class="form-control" name="alamat1" placeholder="Masukkan alamat dokter">
-                    </div>
-                    <div class="form-group">
-                      <label for="no_hp1">Nomor HP</label>
-                      <input type="text" class="form-control" name="no_hp1" placeholder="Masukkan nomor HP dokter">
-                    </div>
-                    <div class="form-group">
-                      <label for="email1">Email</label>
-                      <input type="email" class="form-control" name="email1" placeholder="Masukkan email dokter">
-                    </div>
-                    <div class="form-group">
-                      <label for="password1">Password</label>
-                      <input disabled type="text" class="form-control" name="password1" placeholder="dokter123">
-                    </div>
-                    <div class="form-group">
-                      <label for="pol1">Poli</label>
-                      <select class="custom-select form-control-border" name="poli1">
-                        <?php
-                        $r_poli = $conn->query("SELECT * FROM poli");
-                        while ($d_poli = mysqli_fetch_array($r_poli, MYSQLI_ASSOC)) :;
-                        ?>
-                          <option value="<?php echo $d_poli["id"]; ?>">
-                            <?php echo $d_poli["nama_poli"]; ?>
-                          </option>
-                        <?php
-                        endwhile;
-                        ?>
+                      <label for="hari1">Hari</label>
+                      <select type="text" class="form-control" name="hari1" placeholder="Masukkan hari">
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
                       </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="jam_mulai1">Jam Mulai</label>
+                      <input type="text" class="form-control" name="jam_mulai1" placeholder="Masukkan jam mulai">
+                    </div>
+                    <div class="form-group">
+                      <label for="jam_selesai1">Jam Selesai</label>
+                      <input type="text" class="form-control" name="jam_selesai1" placeholder="Masukkan jam selesai">
                     </div>
                   </div>
                   <div style="margin-top:-20px; margin-bottom:10px;" class="card-footer">
-                    <button type="submit" name="submit_dokter" class="btn btn-success">Tambah</button>
+                    <button type="submit" name="submit_jadwal_periksa" class="btn btn-success">Tambah</button>
                   </div>
                 </form>
               </div>
             </div> <!-- /tambah Obat form -->
             <!-- info obat -->
             <div class="col-lg-4 col-7">
-              <div class="small-box bg-primary">
+              <div class="small-box bg-success">
                 <div class="inner">
-                  <h3><?php echo '' . $conn->query("SELECT * FROM dokter")->num_rows; ?></h3>
-                  <p>Dokter</p>
+                  <?php
+                  $poli = $conn->query("SELECT poli.nama_poli, poli.keterangan FROM poli JOIN dokter ON poli.id = dokter.id_poli")->fetch_array();
+                  ?>
+                  <h3><?php echo $poli['nama_poli']; ?></h3>
+                  <p><?php echo $poli['keterangan']; ?></p>
                 </div>
                 <div class="icon">
-                  <i class="fa fa-solid fa-stethoscope"></i>
+                  <i class="fa fa-solid fa-capsules"></i>
                 </div>
-                <a href="#" class="small-box-footer">Kelola dokter dengan seksama!</a>
+                <a href="#" class="small-box-footer">Poli anda.</a>
+              </div>
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h3><?php echo '' . $conn->query("SELECT * FROM jadwal_periksa WHERE id_dokter='$id_dokter'")->num_rows; ?></h3>
+                  <p>Jadwal periksa</p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-solid fa-capsules"></i>
+                </div>
+                <a href="#" class="small-box-footer">Kelola jadwal anda dengan seksama!</a>
               </div>
             </div> <!-- /info obat-->
           </div>
           <div class="row">
             <!-- daftar obat -->
             <div class="col-11">
-              <div class="card card-primary">
+              <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Daftar Dokter</h3>
+                  <h3 class="card-title">Jadwal Periksa Anda</h3>
                   <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
                       <!--<input type="text" name="table_search" class="form-control float-right" placeholder="Search">
@@ -262,86 +257,71 @@ if (!isset($_SESSION['nama_admin'])) {
                 </div>
                 <!-- daftar obat body -->
                 <div class="card-body table-responsive p-0" style="height: 400px;">
-                  <table style="width:100%" class="table table-head-fixed text-wrap">
+                  <table class="table table-head-fixed text-wrap">
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th style="width:20%">Nama</th>
-                        <th style="width:20%">Alamat</th>
-                        <th style="width:10%">Nomor HP</th>
-                        <th style="width:10%">Email</th>
-                        <th style="width:10%">Poli</th>
-                        <th style="width:40%">Aksi</th>
+                        <th>No</th>
+                        <th style="width:25%">Hari</th>
+                        <th style="width:25%">Jam Mulai</th>
+                        <th style="width:25%">Jam Selesai</th>
+                        <th style="width:30%">Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $query = mysqli_query($conn, "SELECT d.id, d.nama, d.alamat, d.no_hp, d.email, d.id_poli, p.nama_poli FROM dokter AS d JOIN poli AS p ON d.id_poli = p.id");
-                      while ($dokter = mysqli_fetch_array($query)) {
+                      $no = 1;
+                      $query = mysqli_query($conn, "SELECT * FROM jadwal_periksa WHERE id_dokter='$id_dokter'");
+                      while ($jadwal = mysqli_fetch_array($query)) {
                       ?>
                         <tr>
-                          <td><?php echo $dokter["id"]; ?></td>
-                          <td><?php echo $dokter["nama"]; ?></td>
-                          <td><?php echo $dokter["alamat"]; ?></td>
-                          <td><?php echo $dokter["no_hp"]; ?></td>
-                          <td><?php echo $dokter["email"]; ?></td>
-                          <td><?php echo $dokter["nama_poli"]; ?></td>
+                          <td><?php echo $no; ?></td>
+                          <td><?php echo $jadwal["hari"]; ?></td>
+                          <td><?php echo $jadwal["jam_mulai"]; ?></td>
+                          <td><?php echo $jadwal["jam_selesai"]; ?></td>
                           <td>
                             <div class="row">
-                              <a style="width:45%; margin:4px;" href='' data-toggle="modal" data-target="#modal<?php echo $dokter["id"]; ?>"><button class="btn btn-success btn-block">Edit</button></a>
-                              <a style="width:45%; margin:4px;" href='priv/dokter_delete.php?id=<?php echo $dokter["id"]; ?>'><button class="btn btn-danger btn-block">Hapus</button></a>
+                              <a style="margin:4px;" href='' data-toggle="modal" data-target="#modal<?php echo $jadwal['id']; ?>"><button style="padding:5px;" class="btn btn-success btn-block">Edit</button></a>
+                              <a style="margin:4px;" href='priv/jadwal_delete.php?id=<?php echo $jadwal["id"]; ?>'><button style="padding:5px;" class="btn btn-danger btn-block">Hapus</button></a>
                             </div>
                             <!-- edit modal -->
-                            <div class="modal fade" id="modal<?php echo $dokter["id"]; ?>">
+                            <div class="modal fade" id="modal<?php echo $jadwal['id']; ?>">
                               <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h4 class="modal-title">Edit data dokter</h4>
+                                    <h4 class="modal-title">Edit jadwal</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
                                   <div class="modal-body">
-                                    <form action="priv/dokter_edit.php" method="POST">
-                                      <div style="margin-top:-20px;" class="card-body">
-                                        <div class="form-group">
-                                          <input type="text" hidden value="<?php echo $dokter['id']; ?>" class="form-control" name="id2" placeholder="Masukkan nama obat">
+                                    <form action="priv/jadwal_edit.php" method="POST">
+                                      <div class="card-body">
+                                        <div hidden class="form-group">
+                                          <input type="text" hidden class="form-control" value='<?php echo $jadwal['id']; ?>' name="id_jad2" placeholder="Masukkan jam mulai">
                                         </div>
                                         <div class="form-group">
-                                          <label for="nama_dokter2">Nama dokter</label>
-                                          <input type="text" value="<?php echo $dokter['nama']; ?>" class="form-control" name="nama_dokter2" placeholder="Masukkan nama dokter">
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="alamat2">Alamat</label>
-                                          <input type="text" value="<?php echo $dokter['alamat']; ?>" class="form-control" name="alamat2" placeholder="Masukkan alamat dokter">
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="no_hp2">Nomor HP</label>
-                                          <input type="text" value="<?php echo $dokter['no_hp']; ?>" class="form-control" name="no_hp2" placeholder="Masukkan nomor HP dokter">
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="email2">Email</label>
-                                          <input type="email" value="<?php echo $dokter['email']; ?>" class="form-control" name="email2" placeholder="Masukkan email dokter">
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="poli2">Poli</label>
-                                          <select class="custom-select form-control-border" name="poli2" value="<?php echo $dokter['id_poli']; ?>">
-                                            <?php
-                                            $r_poli = $conn->query("SELECT * FROM poli");
-                                            while ($d_poli = mysqli_fetch_array($r_poli, MYSQLI_ASSOC)) :;
-                                            ?>
-                                              <option value="<?php echo $d_poli["id"]; ?>">
-                                                <?php echo $d_poli["nama_poli"]; ?>
-                                              </option>
-                                            <?php
-                                            endwhile;
-                                            ?>
+                                          <label for="hari2">Hari</label>
+                                          <select type="text" value='<?php echo $jadwal["hari"]; ?>' class="form-control" name="hari2" placeholder="Masukkan hari">
+                                            <option value="Senin">Senin</option>
+                                            <option value="Selasa">Selasa</option>
+                                            <option value="Rabu">Rabu</option>
+                                            <option value="Kamis">Kamis</option>
+                                            <option value="Jumat">Jumat</option>
                                           </select>
                                         </div>
-                                        <div class="modal-footer justify-content-between">
-                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                                          <button type="submit" name="edit_dokter" class="btn btn-primary">Simpan</button>
+                                        <div class="form-group">
+                                          <label for="jam_mulai2">Jam Mulai</label>
+                                          <input type="text" class="form-control" value='<?php echo $jadwal["jam_mulai"]; ?>' name="jam_mulai2" placeholder="Masukkan jam mulai">
                                         </div>
+                                        <div class="form-group">
+                                          <label for="jam_selesai2">Jam Selesai</label>
+                                          <input type="text" class="form-control" value='<?php echo $jadwal["jam_selesai"]; ?>' name="jam_selesai2" placeholder="Masukkan jam selesai">
+                                        </div>
+                                      </div>
+                                      <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                                        <button type="submit" name="edit_jadwal" class="btn btn-primary">Simpan</button>
+                                      </div>
                                     </form>
                                   </div>
                                 </div>
@@ -350,6 +330,7 @@ if (!isset($_SESSION['nama_admin'])) {
                           </td>
                         </tr>
                       <?php
+                        $no++;
                       }
                       ?>
                     </tbody>

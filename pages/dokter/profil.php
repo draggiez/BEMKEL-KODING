@@ -1,11 +1,12 @@
 <?php
-include '../../conf/connection.php';
+include '../../conf/connection.php'; // koneksi ke database.
 session_start();
 if (!isset($_SESSION['nama_dokter'])) {
   header("Location: ../login/login_dokter.php");
   exit();
 }
 $id_dokter = $_SESSION['id_dokter'];
+$data = $conn->query("SELECT * FROM dokter WHERE id = '$id_dokter';")->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,14 +44,21 @@ $id_dokter = $_SESSION['id_dokter'];
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <?php
-  if (isset($_POST['submit_jadwal_periksa'])) {
+  if (isset($_POST['edit_profil'])) {
     include("../../conf/connection.php");
 
-    $s_hari = $_POST['hari1'];
-    $s_jam_mulai = $_POST['jam_mulai1'];
-    $s_jam_selesai = $_POST['jam_selesai1'];
-    $result = mysqli_query($conn, "INSERT INTO jadwal_periksa(id_dokter,hari,jam_mulai,jam_selesai) VALUES('$id_dokter','$s_hari','$s_jam_mulai','$s_jam_selesai')");
-    header("Location: jadwal_periksa.php");
+    $e_nama = $_POST['nama1'];
+    $e_alamat = $_POST['alamat1'];
+    $e_no_hp = $_POST['nohp1'];
+    $e_email = $_POST['email1'];
+    $e_pass = $_POST['pass1'];
+
+    if ($e_pass == null || $e_pass == "" || $e_pass == '') {
+      $result = mysqli_query($conn, "UPDATE dokter SET nama='$e_nama', alamat='$e_alamat', no_hp='$e_no_hp', email='$e_email' WHERE id='$id_dokter';");
+    } else {
+      $result = mysqli_query($conn, "UPDATE dokter SET nama='$e_nama', alamat='$e_alamat', no_hp='$e_no_hp', email='$e_email', password='$e_pass' WHERE id='$id_dokter';");
+    }
+    header("Location: profil.php");
   }
   ?>
 
@@ -123,7 +131,7 @@ $id_dokter = $_SESSION['id_dokter'];
                 <i class="fa fa-solid fa-dashboard mr-2"></i>
                 <p>
                   Dashboard
-                  <span class="right badge badge-success">dokter</span>
+                  <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
             </li>
@@ -178,113 +186,41 @@ $id_dokter = $_SESSION['id_dokter'];
       <section class="content">
         <div class="container-fluid">
           <div class="row">
-            <!-- daftar obat -->
-            <div class="col-11">
+            <!-- Tambah obat form -->
+            <div class="col-8">
               <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Riwayat Pasien</h3>
-                  <div class="card-tools">
-                    <div class="input-group input-group-sm" style="width: 150px;">
-                      <!--<input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-                    <div class="input-group-append">
-                      <button type="submit" class="btn btn-default">
-                        <i class="fas fa-search"></i>
-                      </button>
-                    </div>-->
+                  <h3 class="card-title">Edit Profil Anda</h3>
+                </div>
+                <form method="POST">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="nama1">Nama</label>
+                      <input type="text" value="<?php echo $data["nama"]; ?>" class="form-control" name="nama1" placeholder="Masukkan nama">
+                    </div>
+                    <div class="form-group">
+                      <label for="alamat1">Alamat</label>
+                      <input type="text" value="<?php echo $data["alamat"]; ?>" class="form-control" name="alamat1" placeholder="Masukkan alamat">
+                    </div>
+                    <div class="form-group">
+                      <label for="nohp1">No HP</label>
+                      <input type="text" value="<?php echo $data["no_hp"]; ?>" class="form-control" name="nohp1" placeholder="Masukkan nomor HP">
+                    </div>
+                    <div class="form-group">
+                      <label for="email1">Email</label>
+                      <input type="text" value="<?php echo $data["email"]; ?>" class="form-control" name="email1" placeholder="Masukkan email">
+                    </div>
+                    <div class="form-group">
+                      <label for="pass1">Ganti Password</label>
+                      <input type="password" class="form-control" name="pass1" placeholder="Masukkan password">
                     </div>
                   </div>
-                </div>
-                <!-- daftar obat body -->
-                <div class="card-body table-responsive p-0" style="height: 400px;">
-                  <table class="table table-head-fixed text-wrap">
-                    <thead>
-                      <tr>
-                        <th>No</th>
-                        <th>Nama Pasien</th>
-                        <th>Alamat</th>
-                        <th>No. KTP</th>
-                        <th>No. HP</th>
-                        <th>No. RM</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php
-                      $no = 1;
-                      $query = mysqli_query($conn, "SELECT periksa.id AS id_periksa, periksa.biaya_periksa AS bp, daftar_poli.keluhan AS keluhan, periksa.catatan AS catatan, dokter.nama AS nama_dokter, pasien.id AS id_pasien, pasien.nama AS nama_pasien, pasien.alamat AS alamat_pasien, pasien.no_ktp AS no_ktp, pasien.no_hp AS no_hp, pasien.no_rm, periksa.tgl_periksa AS tanggal_periksa FROM pasien JOIN daftar_poli ON pasien.id = daftar_poli.id_pasien JOIN periksa ON daftar_poli.id=periksa.id_daftar_poli JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE daftar_poli.status_periksa = 1 AND dokter.id = '$id_dokter'");
-                      while ($pasien = mysqli_fetch_array($query)) {
-                      ?>
-                        <tr>
-                          <td><?php echo $no; ?></td>
-                          <td><?php echo $pasien["nama_pasien"]; ?></td>
-                          <td><?php echo $pasien["nama_dokter"]; ?></td>
-                          <td><?php echo $pasien["no_ktp"]; ?></td>
-                          <td><?php echo $pasien["no_hp"]; ?></td>
-                          <td><?php echo $pasien["no_rm"]; ?></td>
-                          <td>
-                            <div class="row">
-                              <a href='' data-toggle="modal" data-target="#modal<?php echo $pasien['id_pasien']; ?>"><button class="btn btn-success btn-block">Detail</button></a>
-                            </div>
-                            <div class="modal" id="modal<?php echo $pasien['id_pasien']; ?>">
-                              <div class="modal-dialog modal-xl">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h4 class="modal-title">Detail Riwayat <?php echo $pasien['nama_pasien'] ?></h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <table style="width:100%" class="table table-head-fixed text-wrap">
-                                      <thead>
-                                        <tr>
-                                          <th>No</th>
-                                          <th>Tanggal Periksa</th>
-                                          <th>Nama Pasien</th>
-                                          <th>Nama Dokter</th>
-                                          <th>Keluhan</th>
-                                          <th>Catatan</th>
-                                          <th>Obat</th>
-                                          <th>Biaya Periksa</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                          <td><?php echo $no; ?></td>
-                                          <td><?php echo $pasien["tanggal_periksa"]; ?></td>
-                                          <td><?php echo $pasien["nama_pasien"]; ?></td>
-                                          <td><?php echo $pasien["nama_dokter"]; ?></td>
-                                          <td><?php echo $pasien["keluhan"]; ?></td>
-                                          <td><?php echo $pasien["catatan"]; ?></td>
-                                          <td>
-                                            <?php
-                                            $id_periksa = $pasien['id_periksa'];
-                                            $query2 = mysqli_query($conn, "SELECT obat.nama_obat AS nama_obat FROM obat JOIN detail_periksa ON detail_periksa.id_obat = obat.id WHERE detail_periksa.id_periksa = '$id_periksa'");
-                                            while ($d_obat = mysqli_fetch_array($query2)) {
-                                              echo '- ' . $d_obat['nama_obat'] . '<br>';
-                                            }
-                                            ?>
-                                          </td>
-                                          <td>Rp<?php echo $pasien["bp"]; ?></td>
-
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-                            </div> <!-- / model body -->
-                          </td>
-                        </tr>
-                      <?php
-                        $no++;
-                      }
-                      ?>
-                    </tbody>
-                  </table>
-                </div> <!-- /daftar obat body -->
+                  <div style="margin-top:-20px; margin-bottom:10px;" class="card-footer">
+                    <button type="submit" name="edit_profil" class="btn btn-success">Edit</button>
+                  </div>
+                </form>
               </div>
-            </div> <!-- /daftar obat -->
+            </div> <!-- /tambah Obat form -->
           </div>
         </div> <!-- /.container-fluid -->
       </section>

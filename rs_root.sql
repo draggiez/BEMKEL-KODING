@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2023 at 03:41 PM
+-- Generation Time: Jan 05, 2024 at 05:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -52,17 +52,16 @@ CREATE TABLE `daftar_poli` (
   `id_pasien` int(11) DEFAULT NULL,
   `id_jadwal` int(11) DEFAULT NULL,
   `keluhan` text DEFAULT NULL,
-  `no_antrian` int(11) DEFAULT NULL
+  `no_antrian` int(11) DEFAULT NULL,
+  `status_periksa` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `daftar_poli`
 --
 
-INSERT INTO `daftar_poli` (`id`, `id_pasien`, `id_jadwal`, `keluhan`, `no_antrian`) VALUES
-(1, 1, 1, 'Pusing, mata berkunang-kunang', 1),
-(11, 3, 1, 'Tambal Gigi', 2),
-(12, 3, 3, 'Bersihin dosa', 1);
+INSERT INTO `daftar_poli` (`id`, `id_pasien`, `id_jadwal`, `keluhan`, `no_antrian`, `status_periksa`) VALUES
+(1, 1, 1, 'Gigi sakit buat ngunyah janji', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -75,6 +74,14 @@ CREATE TABLE `detail_periksa` (
   `id_periksa` int(11) DEFAULT NULL,
   `id_obat` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `detail_periksa`
+--
+
+INSERT INTO `detail_periksa` (`id`, `id_periksa`, `id_obat`) VALUES
+(3, 1, 11),
+(4, 1, 12);
 
 -- --------------------------------------------------------
 
@@ -97,7 +104,7 @@ CREATE TABLE `dokter` (
 --
 
 INSERT INTO `dokter` (`id`, `nama`, `alamat`, `no_hp`, `id_poli`, `email`, `password`) VALUES
-(1, 'Naruto', 'Jl. Konoha 56', '089777654342', 1, 'dok1@gmail.com', 'dok1'),
+(1, 'Dr. Naruto', 'Jl. Konoha 57', '089777654343', 1, 'dok1@gmail.com', 'dok1'),
 (2, 'Minato', 'Jl. Merdeka', '087667890754', 1, 'dok2@gmail.com', 'dokter123');
 
 -- --------------------------------------------------------
@@ -119,8 +126,8 @@ CREATE TABLE `jadwal_periksa` (
 --
 
 INSERT INTO `jadwal_periksa` (`id`, `id_dokter`, `hari`, `jam_mulai`, `jam_selesai`) VALUES
-(1, 1, 'Senin', '07:00:00', '09:00:00'),
-(3, 2, 'Senin', '09:00:00', '11:00:00');
+(1, 1, 'Senin', '07:00:00', '10:00:00'),
+(2, 1, 'Selasa', '08:00:00', '11:00:00');
 
 -- --------------------------------------------------------
 
@@ -309,8 +316,7 @@ CREATE TABLE `pasien` (
 --
 
 INSERT INTO `pasien` (`id`, `nama`, `alamat`, `no_ktp`, `no_hp`, `no_rm`, `email`, `password`) VALUES
-(1, 'Sakura', 'Jl. Landoh', '3317102837871147', '087466534213', '202312-001', '', ''),
-(3, 'Agus Kurniawan', 'Jl. Kaliuntu', '3317123465669997', '087889765432', '202312-002', 'pas1@gmail.com', 'pas1');
+(1, 'Pak Vinsen', 'Jl. Kaliuntu', '3317345721930007', '087889765432', '202401-001', 'pas1@gmail.com', 'pas1');
 
 -- --------------------------------------------------------
 
@@ -325,6 +331,13 @@ CREATE TABLE `periksa` (
   `catatan` text DEFAULT NULL,
   `biaya_periksa` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `periksa`
+--
+
+INSERT INTO `periksa` (`id`, `id_daftar_poli`, `tgl_periksa`, `catatan`, `biaya_periksa`) VALUES
+(1, 1, '2024-01-04 08:10:00', 'Giginya berlubang perlu ditambal cintakuu', 183000);
 
 -- --------------------------------------------------------
 
@@ -418,13 +431,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `daftar_poli`
 --
 ALTER TABLE `daftar_poli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `detail_periksa`
 --
 ALTER TABLE `detail_periksa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `dokter`
@@ -436,7 +449,7 @@ ALTER TABLE `dokter`
 -- AUTO_INCREMENT for table `jadwal_periksa`
 --
 ALTER TABLE `jadwal_periksa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `obat`
@@ -448,13 +461,13 @@ ALTER TABLE `obat`
 -- AUTO_INCREMENT for table `pasien`
 --
 ALTER TABLE `pasien`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `periksa`
 --
 ALTER TABLE `periksa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `poli`

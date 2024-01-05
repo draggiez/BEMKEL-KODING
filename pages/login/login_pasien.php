@@ -89,10 +89,17 @@
             <div class="col-4">
               <button class="btn btn-primary btn-block" type="submit" name="submit">Masuk</button>
             </div>
+            
             <!-- /.col -->
           </div>
+          
         </form>
         <!-- /.login-card-body -->
+        <div class="social-auth-links text-center mt-0">
+        <p class="mt-3">
+          Belum punya akun pasien?<a href="../register/register_pasien.php" class="text-center"> Daftar Disini.</a>
+        </p>
+      </div>
       </div>
     </div>
     <!-- /.login-box -->

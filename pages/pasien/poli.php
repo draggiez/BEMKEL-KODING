@@ -126,7 +126,7 @@ $no_rm_pasien = $_SESSION['no_rm']
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
               <a href="../dashboard/db_pasien.php" class="nav-link">
-                <i class="fa fa-solid fa-stethoscope mr-2"></i>
+                <i class="fa fa-solid fa-dashboard mr-2"></i>
                 <p>
                   Dashboard
                   <span class="right badge badge-primary">Pasien</span>
@@ -251,7 +251,7 @@ $no_rm_pasien = $_SESSION['no_rm']
                       ON c.id_jadwal = b.id 
                       JOIN poli AS d
                       ON a.id_poli = d.id
-                      WHERE c.id_pasien = 3;");
+                      WHERE c.id_pasien = '$id_pasien';");
                       while ($jadwal = mysqli_fetch_array($query)) {
                       ?>
                         <tr>

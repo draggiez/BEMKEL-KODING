@@ -107,6 +107,15 @@ if (!isset($_SESSION['nama_admin'])) {
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
+              <a href="db_admin.php" class="nav-link">
+                <i class="fa fa-solid fa-dashboard mr-2"></i>
+                <p>
+                  Dashboard
+                  <span class="right badge badge-danger">Admin</span>
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="../admin/dokter.php" class="nav-link">
                 <i class="fa fa-solid fa-stethoscope mr-2"></i>
                 <p>
@@ -116,7 +125,7 @@ if (!isset($_SESSION['nama_admin'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+              <a href="../admin/pasien.php" class="nav-link">
                 <i class="fa fa-solid fa-user mr-2"></i>
                 <p>
                   Pasien

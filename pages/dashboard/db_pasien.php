@@ -108,7 +108,7 @@ if (!isset($_SESSION['nama_pasien'])) {
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
               <a href="db_pasien.php" class="nav-link">
-                <i class="fa fa-solid fa-stethoscope mr-2"></i>
+                <i class="fa fa-solid fa-dashboard mr-2"></i>
                 <p>
                   Dashboard
                   <span class="right badge badge-primary">Pasien</span>
@@ -166,7 +166,7 @@ if (!isset($_SESSION['nama_pasien'])) {
                 <div class="icon">
                   <i class="fa fa-solid fa-house-chimney-medical"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">Poli yang tersedia <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->

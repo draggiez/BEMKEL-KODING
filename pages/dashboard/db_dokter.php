@@ -107,19 +107,28 @@ if (!isset($_SESSION['nama_dokter'])) {
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
-              <a href="../dokter/periksa.php" class="nav-link">
+              <a href="db_dokter.php" class="nav-link">
+                <i class="fa fa-solid fa-dashboard mr-2"></i>
+                <p>
+                  Dashboard
+                  <span class="right badge badge-success">dokter</span>
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../dokter/jadwal_periksa.php" class="nav-link">
                 <i class="fa fa-solid fa-stethoscope mr-2"></i>
                 <p>
-                  Periksa
+                  Jadwal Periksa
                   <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
             </li>
-			<li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+            <li class="nav-item">
+              <a href="../dokter/pasien.php" class="nav-link">
                 <i class="fa fa-solid fa-user mr-2"></i>
                 <p>
-                  Pasien
+                  Memeriksa Pasien
                   <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
@@ -134,10 +143,10 @@ if (!isset($_SESSION['nama_dokter'])) {
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+              <a href="../dokter/profil.php" class="nav-link">
                 <i class="fa fa-solid fa-house-chimney-medical mr-2"></i>
                 <p>
-                  Data Diri
+                  Profil
                   <span class="right badge badge-success">Dokter</span>
                 </p>
               </a>
@@ -176,20 +185,6 @@ if (!isset($_SESSION['nama_dokter'])) {
           <div class="row">
             <div class="col-lg-3 col-6">
               <!-- small box -->
-              <div class="small-box bg-info">
-                <div class="inner">
-                  <h3><?php echo '' . $conn->query("SELECT * FROM dokter")->num_rows; ?></h3>
-                  <p>Dokter</p>
-                </div>
-                <div class="icon">
-                  <i class="fa fa-solid fa-stethoscope"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
               <div class="small-box bg-success">
                 <div class="inner">
                   <h3><?php echo '' . $conn->query("SELECT * FROM pasien")->num_rows; ?></h3>
@@ -204,32 +199,20 @@ if (!isset($_SESSION['nama_dokter'])) {
             <!-- ./col -->
             <div class="col-lg-3 col-6">
               <!-- small box -->
-              <div class="small-box bg-warning">
+              <div class="small-box bg-success">
                 <div class="inner">
-                  <h3><?php echo '' . $conn->query("SELECT * FROM poli")->num_rows; ?></h3>
-                  <p>Poli</p>
-                </div>
-                <div class="icon">
-                  <i class="fa fa-solid fa-house-chimney-medical"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
-            <div class="col-lg-3 col-6">
-              <!-- small box -->
-              <div class="small-box bg-danger">
-                <div class="inner">
-                  <h3><?php echo '' . $conn->query("SELECT * FROM obat")->num_rows; ?></h3>
-                  <p>Obat</p>
+                  <?php
+                  $poli = $conn->query("SELECT poli.nama_poli, poli.keterangan FROM poli JOIN dokter ON poli.id = dokter.id_poli")->fetch_array();
+                  ?>
+                  <h3><?php echo $poli['nama_poli']; ?></h3>
+                  <p><?php echo $poli['keterangan']; ?></p>
                 </div>
                 <div class="icon">
                   <i class="fa fa-solid fa-capsules"></i>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer">Poli anda.</a>
               </div>
             </div>
-            <!-- ./col -->
           </div>
           <!-- /.row -->
           <!-- Main row -->
